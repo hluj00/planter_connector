@@ -17,7 +17,6 @@ public class App
         while(true){
             long sec = System.currentTimeMillis() / 1000;
             if (sec >= lastSec+5 || sec < lastSec) {
-                System.out.println("tada");
                 a.resubscribe();
                 //todo send alert
                 lastSec = sec;

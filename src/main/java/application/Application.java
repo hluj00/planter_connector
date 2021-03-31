@@ -57,7 +57,7 @@ public class Application {
                     }
                     iOld += iOld < planters.size() -1 ? 1 : 0;
                     iNew += iNew < newList.size() -1 ? 1 : 0;
-                } else if (compare < 0){
+                } else if (compare > 0){
                     mqttClient.unsubscribe(planters.get(iOld));
                     if (iNew < newList.size() - 1){
                         iNew++;
