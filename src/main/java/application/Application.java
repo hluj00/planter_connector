@@ -30,6 +30,10 @@ public class Application {
         test();
     }
 
+    public boolean isMqttConnected(){
+        return mqttClient.isConnected();
+    }
+
     public void resubscribe(){
         List<Planter> newList = mySqlConnection.getAllPlanters();
         int size = Math.max(planters.size(), newList.size());
@@ -105,35 +109,35 @@ public class Application {
             String topic = planter.getAirHumiditySensorTopic();
             if (measurements.containsKey(topic)){
                 Message message = measurements.get(topic);
-                FloatMesurement measurement = new FloatMesurement(planter.getId(), new Timestamp(System.currentTimeMillis()), Float.parseFloat(message.getMessage()));
+                FloatMesurement measurement = new FloatMesurement(planter.getId(), message.getTime(), Float.parseFloat(message.getMessage()));
                 mySqlConnection.addAirHumidity(measurement);
             }
 
             topic = planter.getAirTemperatureSensorTopic();
             if (measurements.containsKey(topic)){
                 Message message = measurements.get(topic);
-                FloatMesurement measurement = new FloatMesurement(planter.getId(), new Timestamp(System.currentTimeMillis()), Float.parseFloat(message.getMessage()));
+                FloatMesurement measurement = new FloatMesurement(planter.getId(), message.getTime(), Float.parseFloat(message.getMessage()));
                 mySqlConnection.addAirTemperature(measurement);
             }
 
             topic = planter.getLightSensorTopic();
             if (measurements.containsKey(topic)){
                 Message message = measurements.get(topic);
-                FloatMesurement measurement = new FloatMesurement(planter.getId(), new Timestamp(System.currentTimeMillis()), Float.parseFloat(message.getMessage()));
+                FloatMesurement measurement = new FloatMesurement(planter.getId(), message.getTime(), Float.parseFloat(message.getMessage()));
                 mySqlConnection.addLightLevel(measurement);
             }
 
             topic = planter.getSoilMoistureSensorTopic();
             if (measurements.containsKey(topic)){
                 Message message = measurements.get(topic);
-                FloatMesurement measurement = new FloatMesurement(planter.getId(), new Timestamp(System.currentTimeMillis()), Float.parseFloat(message.getMessage()));
+                FloatMesurement measurement = new FloatMesurement(planter.getId(), message.getTime(), Float.parseFloat(message.getMessage()));
                 mySqlConnection.addSoilMoisture(measurement);
             }
 
             topic = planter.getWaterLevelSensorTopic();
             if (measurements.containsKey(topic)){
                 Message message = measurements.get(topic);
-                FloatMesurement measurement = new FloatMesurement(planter.getId(), new Timestamp(System.currentTimeMillis()), Float.parseFloat(message.getMessage()));
+                FloatMesurement measurement = new FloatMesurement(planter.getId(), message.getTime(), Float.parseFloat(message.getMessage()));
                 mySqlConnection.addWaterLevel(measurement);
             }
         }

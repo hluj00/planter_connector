@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import application.classes.Planter;
 import org.eclipse.paho.client.mqttv3.*;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 
 public class MqttClient {
@@ -17,9 +18,17 @@ public class MqttClient {
     private static MqttAsyncClient myClient;
     private static MyCallback myCallback;
 
+    public boolean isConnected(){
+        return myClient.isConnected();
+    }
+
 
     public MqttClient() throws MqttException{
-        myClient = new MqttAsyncClient("tcp://192.168.1.166:1883", UUID.randomUUID().toString());
+        //https://github.com/eclipse/paho.mqtt.java/issues/810
+        MemoryPersistence lMemoryPersistence = new MemoryPersistence();
+
+        //myClient = new MqttAsyncClient("tcp://192.168.1.166:1883", UUID.randomUUID().toString());
+        myClient = new MqttAsyncClient("tcp://192.168.2.199:1883", UUID.randomUUID().toString(), lMemoryPersistence);
         myCallback = new MyCallback();
         myClient.setCallback(myCallback);
     }

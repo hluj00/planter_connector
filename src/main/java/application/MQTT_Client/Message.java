@@ -2,15 +2,18 @@ package application.MQTT_Client;
 
 import application.classes.Planter;
 
+import java.sql.Timestamp;
 import java.util.Objects;
 
 public class Message {
     private String topic;
     private String message;
+    private Timestamp time;
 
-    public Message(String topic, String message){
+    public Message(String topic, String message, Timestamp time){
         this.topic = topic;
         this.message = message;
+        this.time = time;
     }
 
     public String getTopic() {
@@ -19,6 +22,10 @@ public class Message {
 
     public String getMessage() {
         return message;
+    }
+
+    public Timestamp getTime() {
+        return time;
     }
 
     @Override

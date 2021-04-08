@@ -4,6 +4,7 @@ import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,7 +47,7 @@ public class MyCallback implements MqttCallback
 
     public void messageArrived(String topic, MqttMessage message){
         if (topicTypes.get(topic) == MqttClient.TopicType.measurement){
-            measurements.put(topic, new Message(topic, message.toString()));
+            measurements.put(topic, new Message(topic, message.toString(), new Timestamp(System.currentTimeMillis())));
         }
     }
 

@@ -16,6 +16,9 @@ public class App
         long lastSec = -1;
         while(true){
             long sec = System.currentTimeMillis() / 1000;
+            if(!a.isMqttConnected()){
+                a.start();
+            }
             if (sec >= lastSec+5 || sec < lastSec) {
                 a.resubscribe();
                 //todo send alert

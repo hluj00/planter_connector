@@ -54,7 +54,8 @@ public class MySqlConnection {
 
         try {
             // DriverManager: The basic service for managing a set of JDBC drivers.
-            connection = DriverManager.getConnection("jdbc:mysql://192.168.1.166:3306/planter_test", "gitea", "6vglCsmIvlwco9He");
+            connection = DriverManager.getConnection("jdbc:mysql://192.168.2.199:3306/planter_test", "gitea", "6vglCsmIvlwco9He");
+            //connection = DriverManager.getConnection("jdbc:mysql://192.168.1.166:3306/planter_test", "gitea", "6vglCsmIvlwco9He");
             if (connection != null) {
                 log("Connection Successful! Enjoy. Now it's time to push data");
             } else {
