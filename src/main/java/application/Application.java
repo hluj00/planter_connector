@@ -5,6 +5,7 @@ import application.MQTT_Client.MqttClient;
 import application.MYsql_Client.MySqlConnection;
 import application.classes.FloatMesurement;
 import application.classes.Planter;
+import application.classes.PlanterAction;
 import application.classes.User;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
@@ -143,5 +144,20 @@ public class Application {
         }
 
         mqttClient.clearMessages();
+    }
+
+    public void executeActions(){
+        for (Planter planter : planters) {
+            List<PlanterAction> actions = mySqlConnection.findUnexecutedActions(planter);
+
+            for (PlanterAction action:actions) {
+                if (action.getType() == 1){
+                    mqttClient.executeWaterPump(planter);
+                    action.setExecuted(true);
+                    action.setExecutedAt(new Timestamp(System.currentTimeMillis()));
+                    mySqlConnection.updateActionExecuted(action);
+                }
+            }
+        }
     }
 }

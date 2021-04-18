@@ -21,9 +21,9 @@ public class App
             }
             if (sec >= lastSec+5 || sec < lastSec) {
                 a.resubscribe();
-                //todo send alert
                 lastSec = sec;
                 a.checkMessages();
+                a.executeActions();
             }//If():
         }//While
 

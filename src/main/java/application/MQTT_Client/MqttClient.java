@@ -1,5 +1,6 @@
 package application.MQTT_Client;
 
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -27,8 +28,8 @@ public class MqttClient {
         //https://github.com/eclipse/paho.mqtt.java/issues/810
         MemoryPersistence lMemoryPersistence = new MemoryPersistence();
 
-        //myClient = new MqttAsyncClient("tcp://192.168.1.166:1883", UUID.randomUUID().toString());
-        myClient = new MqttAsyncClient("tcp://192.168.2.199:1883", UUID.randomUUID().toString(), lMemoryPersistence);
+        myClient = new MqttAsyncClient("tcp://192.168.1.166:1883", UUID.randomUUID().toString(), lMemoryPersistence);
+//        myClient = new MqttAsyncClient("tcp://192.168.2.199:1883", UUID.randomUUID().toString(), lMemoryPersistence);
         myCallback = new MyCallback();
         myClient.setCallback(myCallback);
     }
@@ -95,5 +96,19 @@ public class MqttClient {
 
     public void clearMessages() {
         myCallback.clearMeasurements();
+    }
+
+    public void executeWaterPump(Planter planter){
+        String topic = planter.getWaterPumpTopic();
+        //https://en.wikipedia.org/wiki/List_of_Unicode_characters#Number_Forms
+        char a = '\u0031'; //1
+        byte b = (byte)a;
+        byte[] payload = {b} ;
+        MqttMessage msg = new MqttMessage(payload);
+        try {
+            myClient.publish(topic, msg);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
