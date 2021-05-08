@@ -1,0 +1,11 @@
+[Unit]
+Description=Planter_connector
+After=network.target
+ 
+[Service]
+ExecStart=java -jar /home/pi/projects/planter_connector/planter_connector.jar
+Restart=always
+User=pi
+ 
+[Install]
+WantedBy=multi-user.target

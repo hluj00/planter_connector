@@ -5,9 +5,7 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class MyCallback implements MqttCallback
 {
@@ -17,6 +15,12 @@ public class MyCallback implements MqttCallback
     public MyCallback(){
         measurements = new HashMap<>();
         topicTypes = new HashMap<>();
+    }
+
+    public void messageArrived(String topic, MqttMessage message){
+        if (topicTypes.get(topic) == MqttClient.TopicType.measurement){
+            measurements.put(topic, new Message(topic, message.toString(), new Timestamp(System.currentTimeMillis())));
+        }
     }
 
     public void addTopic(String topic, MqttClient.TopicType type){
@@ -35,23 +39,13 @@ public class MyCallback implements MqttCallback
         measurements.clear();
     }
 
-
-
     public void connectionLost(Throwable arg0) {
-        // TODO Auto-generated method stub
+
     }
 
     public void deliveryComplete(IMqttDeliveryToken arg0) {
-        // TODO Auto-generated method stub
+
     }
-
-    public void messageArrived(String topic, MqttMessage message){
-        if (topicTypes.get(topic) == MqttClient.TopicType.measurement){
-            measurements.put(topic, new Message(topic, message.toString(), new Timestamp(System.currentTimeMillis())));
-        }
-    }
-
-
 
 }
 

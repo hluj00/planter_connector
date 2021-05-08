@@ -1,7 +1,5 @@
 package application.MQTT_Client;
 
-import application.classes.Planter;
-
 import java.sql.Timestamp;
 import java.util.Objects;
 

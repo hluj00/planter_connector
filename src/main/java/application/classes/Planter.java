@@ -17,15 +17,15 @@ public class Planter implements Comparable<Planter>{
     private String name;
     private int settingsId;
     private int userId;
-    private String color;
-    private String waterPumpTopic;
-    private String lightSensorTopic;
-    private String waterLevelSensorTopic;
-    private String soilMoistureSensorTopic;
-    private String airHumiditySensorTopic;
-    private String airTemperatureSensorTopic;
+    private final String color;
+    private final String waterPumpTopic;
+    private final String lightSensorTopic;
+    private final String waterLevelSensorTopic;
+    private final String soilMoistureSensorTopic;
+    private final String airHumiditySensorTopic;
+    private final String airTemperatureSensorTopic;
 
-    public Planter(int id, String name, int settingsId, int userId, String color) {
+    public Planter(int id, String name, int settingsId, int userId, String color, String userHash) {
         this.id = id;
         this.name = name;
         this.settingsId = settingsId;
@@ -34,12 +34,12 @@ public class Planter implements Comparable<Planter>{
 
 
 
-        waterPumpTopic = String.format("%d/%s/%s", userId, name, "waterPump");
-        lightSensorTopic = String.format("%d/%s/%s", userId, name, "lightSensor");
-        waterLevelSensorTopic = String.format("%d/%s/%s", userId, name, "waterLevelSensor");
-        soilMoistureSensorTopic = String.format("%d/%s/%s", userId, name, "soilMoistureSensor");
-        airHumiditySensorTopic = String.format("%d/%s/%s", userId, name, "airHumiditySensor");
-        airTemperatureSensorTopic = String.format("%d/%s/%s", userId, name, "airTemperatureSensor");
+        waterPumpTopic = String.format("%s/planter%d/%s", userHash, id, "waterPump");
+        lightSensorTopic = String.format("%s/planter%d/%s", userHash, id, "lightSensor");
+        waterLevelSensorTopic = String.format("%s/planter%d/%s", userHash, id, "waterLevelSensor");
+        soilMoistureSensorTopic = String.format("%s/planter%d/%s", userHash, id, "soilMoistureSensor");
+        airHumiditySensorTopic = String.format("%s/planter%d/%s", userHash, id, "airHumiditySensor");
+        airTemperatureSensorTopic = String.format("%s/planter%d/%s", userHash, id, "airTemperatureSensor");
     }
 
     public int getId() {

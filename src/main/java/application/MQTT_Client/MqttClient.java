@@ -1,8 +1,6 @@
 package application.MQTT_Client;
 
-import java.nio.ByteBuffer;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 import application.classes.Planter;
@@ -24,11 +22,15 @@ public class MqttClient {
     }
 
 
-    public MqttClient() throws MqttException{
+    public MqttClient(){
         //https://github.com/eclipse/paho.mqtt.java/issues/810
         MemoryPersistence lMemoryPersistence = new MemoryPersistence();
 
-        myClient = new MqttAsyncClient("tcp://192.168.1.166:1883", UUID.randomUUID().toString(), lMemoryPersistence);
+        try {
+            myClient = new MqttAsyncClient("tcp://192.168.1.166:1883", UUID.randomUUID().toString(), lMemoryPersistence);
+        } catch(Exception ignored){
+
+        }
 //        myClient = new MqttAsyncClient("tcp://192.168.2.199:1883", UUID.randomUUID().toString(), lMemoryPersistence);
         myCallback = new MyCallback();
         myClient.setCallback(myCallback);

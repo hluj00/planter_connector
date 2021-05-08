@@ -7,25 +7,35 @@ import application.classes.FloatMesurement;
 import application.classes.Planter;
 import application.classes.PlanterAction;
 import application.classes.User;
-import org.eclipse.paho.client.mqttv3.MqttException;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class Application {
     private MqttClient mqttClient;
-    private MySqlConnection mySqlConnection;
+    private final MySqlConnection mySqlConnection;
     private List<Planter> planters;
+    private HashMap<Integer, User> users;
 
-    public Application() throws MqttException{
-        mqttClient = new MqttClient();
+    public Application(){
+        try {
+            mqttClient = new MqttClient();
+        }catch (Exception ignored){
+        }
+
         mySqlConnection = new MySqlConnection();
-        planters = new ArrayList<Planter>();
+        planters = new ArrayList<>();
+        users = new HashMap<>();
     }
 
-    public void start()throws MqttException {
+    public boolean isRunning(){
+        return true;
+    }
+
+    public void start(){
         mqttClient.connect();
         //mqttClient.subscribe();
         test();
@@ -35,7 +45,16 @@ public class Application {
         return mqttClient.isConnected();
     }
 
+    public void updateUsers(){
+        for (User user : mySqlConnection.getAllUsers()){
+            if (users.containsKey(user.getId())){
+                users.put(user.getId(),user);
+            }
+        }
+    }
+
     public void resubscribe(){
+//        updateUsers();
         List<Planter> newList = mySqlConnection.getAllPlanters();
         int size = Math.max(planters.size(), newList.size());
 
@@ -54,7 +73,7 @@ public class Application {
             int iSum = -1;
             while (iSum != iNew + iOld) {
                 iSum = iNew + iOld;
-                int compare = planters.get(iOld).compareTo(newList.get(iNew)); //+ -> this je vetsi
+                int compare = planters.get(iOld).compareTo(newList.get(iNew)); //+ -> old is bigger
                 if (compare == 0){
                     if (!planters.get(iOld).equals(newList.get(iNew))){
                         mqttClient.unsubscribe(planters.get(iOld));
@@ -102,44 +121,67 @@ public class Application {
         }
         return null;
     }
+
+    public boolean isNumeric(String strNum) {
+        if (strNum == null) {
+            return false;
+        }
+        Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
+        return pattern.matcher(strNum).matches();
+    }
     
-    public void checkMessages(){
+    public void saveNewMessages(){
         HashMap<String, Message> measurements = mqttClient.getMeasurements();
 
         for (Planter planter : planters) {
             String topic = planter.getAirHumiditySensorTopic();
             if (measurements.containsKey(topic)){
                 Message message = measurements.get(topic);
-                FloatMesurement measurement = new FloatMesurement(planter.getId(), message.getTime(), Float.parseFloat(message.getMessage()));
-                mySqlConnection.addAirHumidity(measurement);
+                if (isNumeric(message.getMessage())){
+                    float value = Float.parseFloat(message.getMessage());
+                    FloatMesurement measurement = new FloatMesurement(planter.getId(), message.getTime(), value);
+                    mySqlConnection.addAirHumidity(measurement);
+                }
             }
 
             topic = planter.getAirTemperatureSensorTopic();
             if (measurements.containsKey(topic)){
                 Message message = measurements.get(topic);
-                FloatMesurement measurement = new FloatMesurement(planter.getId(), message.getTime(), Float.parseFloat(message.getMessage()));
-                mySqlConnection.addAirTemperature(measurement);
+                if (isNumeric(message.getMessage())) {
+                    float value = Float.parseFloat(message.getMessage());
+                    FloatMesurement measurement = new FloatMesurement(planter.getId(), message.getTime(), value);
+                    mySqlConnection.addAirTemperature(measurement);
+                }
             }
 
             topic = planter.getLightSensorTopic();
             if (measurements.containsKey(topic)){
                 Message message = measurements.get(topic);
-                FloatMesurement measurement = new FloatMesurement(planter.getId(), message.getTime(), Float.parseFloat(message.getMessage()));
-                mySqlConnection.addLightLevel(measurement);
+                if (isNumeric(message.getMessage())) {
+                    float value = Float.parseFloat(message.getMessage());
+                    FloatMesurement measurement = new FloatMesurement(planter.getId(), message.getTime(), value);
+                    mySqlConnection.addLightLevel(measurement);
+                }
             }
 
             topic = planter.getSoilMoistureSensorTopic();
             if (measurements.containsKey(topic)){
                 Message message = measurements.get(topic);
-                FloatMesurement measurement = new FloatMesurement(planter.getId(), message.getTime(), Float.parseFloat(message.getMessage()));
-                mySqlConnection.addSoilMoisture(measurement);
+                if (isNumeric(message.getMessage())) {
+                    float value = Float.parseFloat(message.getMessage());
+                    FloatMesurement measurement = new FloatMesurement(planter.getId(), message.getTime(), value);
+                    mySqlConnection.addSoilMoisture(measurement);
+                }
             }
 
             topic = planter.getWaterLevelSensorTopic();
             if (measurements.containsKey(topic)){
                 Message message = measurements.get(topic);
-                FloatMesurement measurement = new FloatMesurement(planter.getId(), message.getTime(), Float.parseFloat(message.getMessage()));
-                mySqlConnection.addWaterLevel(measurement);
+                if (isNumeric(message.getMessage())) {
+                    float value = Float.parseFloat(message.getMessage());
+                    FloatMesurement measurement = new FloatMesurement(planter.getId(), message.getTime(), value);
+                    mySqlConnection.addWaterLevel(measurement);
+                }
             }
         }
 
@@ -151,7 +193,7 @@ public class Application {
             List<PlanterAction> actions = mySqlConnection.findUnexecutedActions(planter);
 
             for (PlanterAction action:actions) {
-                if (action.getType() == 1){
+                if (action.getType() == 1){  // 1 = run-pump
                     mqttClient.executeWaterPump(planter);
                     action.setExecuted(true);
                     action.setExecutedAt(new Timestamp(System.currentTimeMillis()));

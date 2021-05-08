@@ -5,15 +5,21 @@ public class User {
     private String userName;
     private String lastName;
     private String email;
+    private String hash;
 
-    public User(int id, String Username, String email) {
+    public User(int id, String Username, String email, String hash) {
         this.id = id;
         this.userName = Username;
         this.email = email;
+        this.hash = hash;
     }
 
     public int getId() {
         return id;
+    }
+
+    public String getHash() {
+        return hash;
     }
 
     public void setId(int id) {
@@ -27,7 +33,6 @@ public class User {
     public void setUserName(String userName) {
         this.userName = userName;
     }
-
 
     public String getEmail() {
         return email;

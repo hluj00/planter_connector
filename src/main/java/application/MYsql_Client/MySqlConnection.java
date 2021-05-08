@@ -19,46 +19,19 @@ public class MySqlConnection {
     static PreparedStatement prepareStat = null;
 
 
-    public MySqlConnection() {
-
-//        try {
-//            log("-------- Simple Crunchify Tutorial on how to make JDBC connection to MySQL DB locally on macOS ------------");
-//            makeJDBCConnection();
-//
-//            log("\n---------- Adding company 'Crunchify LLC' to DB ----------");
-//            addDataToDB("Crunchify, LLC.", "NYC, US", 5, "https://crunchify.com");
-//            addDataToDB("Google Inc.", "Mountain View, CA, US", 50000, "https://google.com");
-//            addDataToDB("Apple Inc.", "Cupertino, CA, US", 30000, "http://apple.com");
-//
-//            log("\n---------- Let's get Data from DB ----------");
-//            getDataFromDB();
-//
-//            crunchifyPrepareStat.close();
-//            crunchifyConn.close(); // connection close
-//
-//        } catch (SQLException e) {
-//
-//            e.printStackTrace();
-//        }
-    }
-
     public void makeJDBCConnection() {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            log("Congrats - Seems your MySQL JDBC Driver Registered!");
         } catch (ClassNotFoundException e) {
-            log("Sorry, couldn't found JDBC driver. Make sure you have added JDBC Maven Dependency Correctly");
             e.printStackTrace();
             return;
         }
 
         try {
-            // DriverManager: The basic service for managing a set of JDBC drivers.
-            //connection = DriverManager.getConnection("jdbc:mysql://192.168.2.199:3306/planter_test", "gitea", "6vglCsmIvlwco9He");
             connection = DriverManager.getConnection("jdbc:mysql://192.168.1.166:3306/planter_test", "gitea", "6vglCsmIvlwco9He");
             if (connection != null) {
-                log("Connection Successful! Enjoy. Now it's time to push data");
+                log("Connection Successful!");
             } else {
                 log("Failed to make connection!");
             }
@@ -103,7 +76,6 @@ public class MySqlConnection {
 
             // execute insert SQL statement
             prepareStat.executeUpdate();
-            log( String.format(" added successfully %s", table));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -121,7 +93,8 @@ public class MySqlConnection {
                 int id = rs.getInt("id");
                 String userName = rs.getString("username");
                 String email = rs.getString("email");
-                users.add(new User(id, userName, email));
+                String hash = rs.getString("hash");
+                users.add(new User(id, userName, email, hash));
             }
         } catch (
                 SQLException e) {
@@ -134,7 +107,9 @@ public class MySqlConnection {
         List<Planter> planters = new ArrayList<>();
 
         try {
-            String getQueryStatement = "SELECT * FROM planter";
+            String getQueryStatement = "SELECT p.*, u.`hash` " +
+                    "FROM planter p " +
+                    "LEFT JOIN `user`  u on (u.id = p.user_id)";
             prepareStat = connection.prepareStatement(getQueryStatement);
             ResultSet rs = prepareStat.executeQuery();
 
@@ -144,7 +119,8 @@ public class MySqlConnection {
                 int settingId = rs.getInt("plant_presets_id");
                 int userId = rs.getInt("user_id");
                 String color = rs.getString("color");
-                planters.add(new Planter(id, name, settingId, userId, color));
+                String hash = rs.getString("hash");
+                planters.add(new Planter(id, name, settingId, userId, color, hash));
             }
         } catch (
                 SQLException e) {
