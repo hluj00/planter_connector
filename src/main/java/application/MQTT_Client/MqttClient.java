@@ -14,6 +14,10 @@ public class MqttClient {
         action
     }
 
+    private String mqttBroker;
+    private String mqttUsername;
+    private String mqttPassword;
+
     private static MqttAsyncClient myClient;
     private static MyCallback myCallback;
 
@@ -22,24 +26,27 @@ public class MqttClient {
     }
 
 
-    public MqttClient(){
+    public MqttClient(String broker, String username, String password){
+        this.mqttBroker = broker;
+        this.mqttUsername = username;
+        this.mqttPassword = password;
+
         //https://github.com/eclipse/paho.mqtt.java/issues/810
         MemoryPersistence lMemoryPersistence = new MemoryPersistence();
 
         try {
-            myClient = new MqttAsyncClient("tcp://192.168.1.166:1883", UUID.randomUUID().toString(), lMemoryPersistence);
+            myClient = new MqttAsyncClient(mqttBroker, UUID.randomUUID().toString(), lMemoryPersistence);
         } catch(Exception ignored){
 
         }
-//        myClient = new MqttAsyncClient("tcp://192.168.2.199:1883", UUID.randomUUID().toString(), lMemoryPersistence);
         myCallback = new MyCallback();
         myClient.setCallback(myCallback);
     }
 
     public boolean connect() {
         MqttConnectOptions options = new MqttConnectOptions();
-        options.setUserName("test");
-        options.setPassword("raspberry".toCharArray());
+        options.setUserName(mqttUsername);
+        options.setPassword(mqttPassword.toCharArray());
 
         try {
             IMqttToken token = myClient.connect(options);

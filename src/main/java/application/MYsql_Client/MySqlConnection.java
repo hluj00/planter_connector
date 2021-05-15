@@ -17,7 +17,15 @@ public class MySqlConnection {
 
     static Connection connection = null;
     static PreparedStatement prepareStat = null;
+    private String database;
+    private String username;
+    private String password;
 
+    public MySqlConnection(String database, String username, String password) {
+        this.database = database;
+        this.username = username;
+        this.password = password;
+    }
 
     public void makeJDBCConnection() {
 
@@ -29,7 +37,7 @@ public class MySqlConnection {
         }
 
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://192.168.1.166:3306/planter_test", "gitea", "6vglCsmIvlwco9He");
+            connection = DriverManager.getConnection(database, username, password);
             if (connection != null) {
                 log("Connection Successful!");
             } else {

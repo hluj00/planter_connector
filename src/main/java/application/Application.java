@@ -20,13 +20,21 @@ public class Application {
     private List<Planter> planters;
     private HashMap<Integer, User> users;
 
+    private final String mySqlDatabase = "jdbc:mysql://192.168.1.166:3306/planter_test";
+    private final String mySqlUsername = "gitea";
+    private final String mySqlPassword = "6vglCsmIvlwco9He";
+
+    private final String mqttBroker = "tcp://192.168.1.166:1883";
+    private final String mqttUsername = "test";
+    private final String mqttPassword = "raspberry";
+
     public Application(){
         try {
-            mqttClient = new MqttClient();
+            mqttClient = new MqttClient(mqttBroker, mqttUsername, mqttPassword);
         }catch (Exception ignored){
         }
 
-        mySqlConnection = new MySqlConnection();
+        mySqlConnection = new MySqlConnection(mySqlDatabase, mySqlUsername,  mySqlPassword);
         planters = new ArrayList<>();
         users = new HashMap<>();
     }
